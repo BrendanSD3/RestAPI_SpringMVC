@@ -26,5 +26,16 @@
         <url-pattern>/</url-pattern>
     </servlet-mapping>
  
- 
+ <mvc:message-converters>
+ <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter" />
+ <!-- Handling Accept: application/json+pretty -->
+ <bean class="com.TasteRest.controller.PrettyMappingJackson2HttpMessageConverter" />
+</mvc:message-converters>
+<mvc:annotation-driven>
+    <mvc:message-converters>
+        <bean class="org.springframework.http.converter.ByteArrayHttpMessageConverter"/>
+    </mvc:message-converters>
+</mvc:annotation-driven>
+
+
 </web-app>

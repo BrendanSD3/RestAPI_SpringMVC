@@ -17,6 +17,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
+import org.springframework.hateoas.ResourceSupport;
 
 /**
  *
@@ -31,7 +32,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "BreweriesGeocode.findByBreweryId", query = "SELECT b FROM BreweriesGeocode b WHERE b.breweryId = :breweryId"),
     @NamedQuery(name = "BreweriesGeocode.findByLatitude", query = "SELECT b FROM BreweriesGeocode b WHERE b.latitude = :latitude"),
     @NamedQuery(name = "BreweriesGeocode.findByLongitude", query = "SELECT b FROM BreweriesGeocode b WHERE b.longitude = :longitude")})
-public class BreweriesGeocode implements Serializable {
+public class BreweriesGeocode extends ResourceSupport implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -66,11 +67,11 @@ public class BreweriesGeocode implements Serializable {
         this.longitude = longitude;
     }
 
-    public Integer getId() {
+    public Integer getGeoId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setGeoId(Integer id) {
         this.id = id;
     }
 

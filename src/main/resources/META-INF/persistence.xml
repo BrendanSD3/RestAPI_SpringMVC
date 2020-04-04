@@ -4,6 +4,9 @@
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
     <class>model.Breweries</class>
     <class>model.BreweriesGeocode</class>
+    <class>model.Beers</class>
+    <class>model.Categories</class>
+    <class>model.Styles</class>
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/taste?zeroDateTimeBehavior=convertToNull"/>

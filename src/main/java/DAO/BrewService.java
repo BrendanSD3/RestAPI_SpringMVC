@@ -27,13 +27,14 @@ public class BrewService {
 
 
     
-    public List<Breweries> getall()
+    public List<Breweries> getall(int pagenum, int pagesize )
     {
       EntityManager em = DBUtil.getEMF().createEntityManager();
         String query="SELECT b FROM Breweries b";
         TypedQuery<Breweries> tq = em.createQuery(query, Breweries.class);
 //        
-            
+        tq.setFirstResult((pagenum-1)*pagesize);
+        tq.setMaxResults(pagesize);
  
         List<Breweries> list = null;
         
@@ -93,7 +94,7 @@ public class BrewService {
         Breweries brew = null;
         try {
             brew = em.find(Breweries.class, id);
-            System.out.println("PRinting result"+ brew);
+            //System.out.println("PRinting result"+ brew);
             if (brew == null)
                 return null;
         } catch (Exception ex) {
@@ -123,4 +124,26 @@ public class BrewService {
               em.close();
           }
       }
+        
+         public BreweriesGeocode getGeoByID(int id) {
+        EntityManager em = DBUtil.getEMF().createEntityManager();
+
+        BreweriesGeocode Geobrew = null;
+        try {
+            Geobrew = em.find(BreweriesGeocode.class, id);
+            //System.out.println("PRinting result"+ Geobrew);
+            if (Geobrew == null)
+                return null;
+        } catch (Exception ex) {
+            System.out.println(ex);
+        } finally {
+            em.close();
+        }
+
+        return Geobrew;
+    }
+        
+        
+        
+        
 }//end BreweriesService

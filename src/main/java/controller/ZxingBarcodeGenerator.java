@@ -53,7 +53,7 @@ public class ZxingBarcodeGenerator {
     public static BufferedImage generateQRCodeImage(String barcodeText) throws Exception {
         QRCodeWriter barcodeWriter = new QRCodeWriter();
         BitMatrix bitMatrix = barcodeWriter.encode(barcodeText, BarcodeFormat.QR_CODE, 200, 200);
-
+        
         return MatrixToImageWriter.toBufferedImage(bitMatrix);
     }
 

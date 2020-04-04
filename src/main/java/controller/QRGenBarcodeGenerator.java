@@ -23,8 +23,9 @@ public class QRGenBarcodeGenerator {
                 .from(barcodeText)
                 .withSize(250, 250)
                 .stream();
+        //System.out.println("stream"+ stream);
         ByteArrayInputStream bis = new ByteArrayInputStream(stream.toByteArray());
-
+//            System.out.println("bis"+bis.readAllBytes());
         return ImageIO.read(bis);
     }
 }
