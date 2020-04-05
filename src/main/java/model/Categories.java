@@ -21,6 +21,7 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+import org.springframework.hateoas.ResourceSupport;
 
 /**
  *
@@ -34,7 +35,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Categories.findById", query = "SELECT c FROM Categories c WHERE c.id = :id"),
     @NamedQuery(name = "Categories.findByCatName", query = "SELECT c FROM Categories c WHERE c.catName = :catName"),
     @NamedQuery(name = "Categories.findByLastMod", query = "SELECT c FROM Categories c WHERE c.lastMod = :lastMod")})
-public class Categories implements Serializable {
+public class Categories extends ResourceSupport implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -66,11 +67,11 @@ public class Categories implements Serializable {
         this.lastMod = lastMod;
     }
 
-    public Integer getId() {
+    public Integer getcatId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setcatId(Integer id) {
         this.id = id;
     }
 

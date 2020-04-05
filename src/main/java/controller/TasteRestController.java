@@ -6,6 +6,7 @@
 package controller;
 
 
+import DAO.BeerService;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
@@ -42,8 +43,12 @@ import org.springframework.web.servlet.ModelAndView;
 import DAO.BrewService;
 import java.io.InputStream;
 import static java.lang.System.in;
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonArrayBuilder;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
+import model.Beers;
 import model.BreweriesGeocode;
 import org.apache.commons.io.IOUtils;
 import org.springframework.hateoas.Link;
@@ -66,6 +71,7 @@ public class TasteRestController {
     
     @Autowired
     BrewService service;
+    //BeerService bservice;
     //ServletContext servletContext;
     
  
@@ -84,20 +90,14 @@ public class TasteRestController {
       @GetMapping(value="/{id}",produces = MediaTypes.HAL_JSON_VALUE)
       public Resource getbrewbyid(@PathVariable("id") int id) throws WriterException, IOException {
         Resource resource = new Resource<Breweries>(service.getBreweriesByID(id));
-         resource.add(linkTo(methodOn(this.getClass()).getBreweries(1,10)).withRel("AllBReweries"));
-         //resource.add(getqrcode(id));
-        //ControllerLinkBuilder linkTo= linkTo(ControllerLinkBuilder.methodOn(this.getClass()).getBreweries(1,10));
-        //resource.add(linkTo.withRel("all-Breweries"));
-                      
+        ControllerLinkBuilder linkTo= linkTo(ControllerLinkBuilder.methodOn(this.getClass()).getBreweries(1,10));
+        resource.add(linkTo.withRel("all-Breweries"));
+  //     System.out.println("resource"+resource.toString());
         return resource;    
                 
       }
-     private Link getqrcode(int id) throws WriterException, IOException
-     {
-         return linkTo(methodOn(this.getClass()).createQrcode(id)).withRel("Qrcode");
+   
      
-     }
-      
         @GetMapping(value="/{page}/{size}",produces = MediaTypes.HAL_JSON_VALUE)
       public Resources<Breweries> getBreweries(@PathVariable("page")int page,@PathVariable("size") int size) throws WriterException, IOException {
         
@@ -108,6 +108,10 @@ public class TasteRestController {
                 int id= b.getBreweryId();
                 Link selfLink = linkTo(this.getClass()).slash(id).withSelfRel();
                 b.add(selfLink);
+                Link mapl = linkTo(this.getClass()).slash("map").slash(id).withRel("Map");
+                Link qrl =linkTo(this.getClass()).slash("code").slash(id).withRel("QRCode");
+                b.add(mapl);
+                b.add(qrl);
                 linkTo(methodOn(this.getClass()).getbrewbyid(id));
             }
         Link link =linkTo(this.getClass()).withSelfRel();
@@ -124,9 +128,7 @@ public class TasteRestController {
           String brewname = b.getName();
           
           String output="<html><body><h3>"+  brewname +"</h3>"+
-                        "<br>\n" +
-"        <iframe width='600px' height='500px' id='mapcanvas' src='https://maps.google.com/maps?coord="+lat+","+lon+"&AMP;q="+brewname+"&z=16&ie=UTF8&iwloc=&output=embed' frameborder='0' scrolling='yes' marginheight='10' marginwidth='10'></iframe>"+
-                        "\"<br></body></html>";
+                        "<br>\n" +"<iframe width='600px' height='500px' id='mapcanvas' src='https://maps.google.com/maps?coord="+lat+","+lon+"&amp;q="+brewname+"&amp;z=9&amp;ie=UTF8&amp;iwloc=B&amp;output=embed' frameborder='0' scrolling='yes' marginheight='10' marginwidth='10'></iframe>"+"<br></body></html>";
           return output;
       }
            
@@ -199,13 +201,41 @@ public class TasteRestController {
         return png;
 	
     }
-    /*******************END of Brewery Crud**************************/
-    /********************Beer CRUD*************************/
+    //*******************END of Brewery Crud**************************/
+    //********************Beer CRUD*************************/
     
-    
-    
-    
-    
+//        @GetMapping(value="/beers/{page}/{size}",produces = MediaTypes.HAL_JSON_VALUE)
+//      public Resources<Beers> getBeers(@PathVariable("page")int page,@PathVariable("size") int size) throws WriterException, IOException {
+//            System.out.println("HEERRREEE in get BEERS");
+//          List<Beers> allBeers = bservice.getall(page, size);
+//        
+//        for(Beers b : allBeers)
+//            {
+//                int id= b.getBeersId();
+//                Link selfLink = linkTo(this.getClass()).slash(id).withSelfRel();
+//                b.add(selfLink);
+//                linkTo(methodOn(this.getClass()).getbeerbyid(id));
+//            }
+//        Link link =linkTo(this.getClass()).withSelfRel();
+//        Resources<Beers> result=new Resources<Beers>(allBeers,link);
+//        return result;
+//                          
+//      }
+//    
+//      @GetMapping(value="/beer/{id}",produces = MediaTypes.HAL_JSON_VALUE)
+//      public Resource getbeerbyid(@PathVariable("id") int id) throws WriterException, IOException {
+//        Resource resource = new Resource<Beers>(bservice.getBeerByID(id));
+//        // resource.add(linkTo(methodOn(this.getClass()).getBreweries(1,10)).withRel("AllBReweries"));
+//         //resource.add(getqrcode(id));
+//        ControllerLinkBuilder linkTo= linkTo(ControllerLinkBuilder.methodOn(this.getClass()).getBeers(1,10));
+//        resource.add(linkTo.withRel("all-Beers"));
+//        //resource.add(getqrcode(id).withRel("QRcode"));
+//      
+//          System.out.println("resource"+resource.toString());
+//        return resource;    
+//                
+//      }
+//    
     
     
     

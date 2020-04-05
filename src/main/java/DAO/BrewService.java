@@ -9,9 +9,7 @@ package DAO;
  *
  * @author brend
  */
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
+
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
