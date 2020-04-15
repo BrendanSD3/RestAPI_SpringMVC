@@ -23,7 +23,32 @@ import org.springframework.stereotype.Service;
 @Service
 public class BrewService {
 
-
+ public List<Breweries> getallnolimit()
+    {
+      EntityManager em = DBUtil.getEMF().createEntityManager();
+        String query="SELECT b FROM Breweries b";
+        TypedQuery<Breweries> tq = em.createQuery(query, Breweries.class);
+//        
+        
+ 
+        List<Breweries> list = null;
+        
+        try {
+            list = tq.getResultList();
+            //System.out.println("list"+ list);
+            if (list == null || list.size() == 0) {
+                return null;
+            }
+        } catch (Exception ex) {
+            System.out.println(ex);
+        } finally {
+            em.close();
+        }
+        //System.out.println("Got the list"+list);
+        return list;       
+    
+    
+    }
     
     public List<Breweries> getall(int pagenum, int pagesize )
     {
@@ -52,14 +77,21 @@ public class BrewService {
     
     
     }
-      public void addBreweries(Breweries b)
+    public void addGeoBrew()
       {
+          int brew_id=getmaxBreweryID();
+          int geoID=getmaxBreweryGeoID();
+          BreweriesGeocode b= new BreweriesGeocode(geoID,brew_id,0,0);
+          
           EntityManager em =DBUtil.getEMF().createEntityManager();
           EntityTransaction trans=em.getTransaction();
           try{
               trans.begin();
               em.persist(b);
               trans.commit();
+              //b.getId();
+              System.out.println("adding geo"+b.toString());
+              
           }
       catch(Exception ex){
           System.out.println("ex"+ ex);
@@ -69,7 +101,50 @@ public class BrewService {
               em.close();
           }
       }
-      public void updateBreweries(Breweries b)
+      public int getmaxBreweryID()
+       {
+             EntityManager em = DBUtil.getEMF().createEntityManager();
+        Integer maxId = (Integer) em.createNamedQuery("Breweries.findMaxId").getSingleResult();
+       
+       
+           System.out.println("maxid"+maxId);
+       return maxId;
+       
+       }
+          public int getmaxBreweryGeoID()
+       {
+             EntityManager em = DBUtil.getEMF().createEntityManager();
+        Integer maxId = (Integer) em.createNamedQuery("BreweriesGeocode.findMaxId").getSingleResult();
+       maxId+=1;
+       
+           System.out.println("maxgeoid"+maxId);
+       return maxId;
+       
+       }
+      public void addBreweries(Breweries b)
+      {
+         
+          EntityManager em =DBUtil.getEMF().createEntityManager();
+          EntityTransaction trans=em.getTransaction();
+          try{
+              trans.begin();
+              em.persist(b);
+              trans.commit();
+              
+            
+          }
+      catch(Exception ex){
+          
+          System.out.println("ex"+ ex);
+          
+      }
+          finally{
+              em.close();
+          }
+                 
+          addGeoBrew();
+      }
+      public void updateBreweries(Breweries b)//update multiple fields
       {
           EntityManager em = DBUtil.getEMF().createEntityManager();
            EntityTransaction trans=em.getTransaction();
@@ -77,6 +152,7 @@ public class BrewService {
               trans.begin();
               em.merge(b);
               trans.commit();
+              System.out.println("Updating");
           }
       catch(Exception ex){
           System.out.println("ex"+ ex);
@@ -86,6 +162,10 @@ public class BrewService {
               em.close();
           }
       }
+      
+      
+      
+      
       public Breweries getBreweriesByID(int id) {
         EntityManager em = DBUtil.getEMF().createEntityManager();
 
@@ -103,24 +183,32 @@ public class BrewService {
 
         return brew;
     }
-        public void deleteAnBreweries(int id)
+        public boolean deleteBrewery(int id)
       {
-          
+          boolean isdeleted = false;
           Breweries b = getBreweriesByID(id);
+          if(b==null)
+          {
+              return isdeleted;
+          }
+          else{
           EntityManager em = DBUtil.getEMF().createEntityManager();
           EntityTransaction trans= em.getTransaction();
           try{
               trans.begin();
               em.remove(em.merge(b));
               trans.commit();
-              
+              isdeleted=true;
           }
           catch(Exception e){
+              isdeleted=false;
               System.out.println("ex"+ e);
           }
           finally {
               em.close();
           }
+          return isdeleted;
+      }
       }
         
          public BreweriesGeocode getGeoByID(int id) {
@@ -140,8 +228,58 @@ public class BrewService {
 
         return Geobrew;
     }
+    public BreweriesGeocode getGeoByBrewID(int brewid) {
+        EntityManager em = DBUtil.getEMF().createEntityManager();
+
+        BreweriesGeocode Geobrew = null;
+     
+        String query="SELECT b FROM BreweriesGeocode b WHERE b.breweryId = :breweryId";
+        TypedQuery<BreweriesGeocode> tq = em.createQuery(query, BreweriesGeocode.class);
+//        
+        tq.setParameter("breweryId", brewid);
         
         
+        try {
+            Geobrew = tq.getSingleResult();
+            System.out.println("result"+ Geobrew);
+            if (Geobrew == null ) {
+                return null;
+            }
+        } catch (Exception ex) {
+            System.out.println(ex);
+        } finally {
+            em.close();
+        }
+        //System.out.println("Got the list"+list);
+       
+        return Geobrew;
+    }
+        public Breweries getBrewbyname(String name) {
+        EntityManager em = DBUtil.getEMF().createEntityManager();
+
+        Breweries brew = null;
+     
+        String query="SELECT b FROM Breweries b WHERE b.name = :name";
+        TypedQuery<Breweries> tq = em.createQuery(query, Breweries.class);
+//        
+        tq.setParameter("name", name);
+        
+        
+        try {
+            brew = tq.getSingleResult();
+            System.out.println("result"+ brew);
+            if (brew == null ) {
+                return null;
+            }
+        } catch (Exception ex) {
+            System.out.println(ex);
+        } finally {
+            em.close();
+        }
+        //System.out.println("Got the list"+list);
+       
+        return brew;
+    }
         
         
 }//end BreweriesService

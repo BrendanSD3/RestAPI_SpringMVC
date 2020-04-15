@@ -5,6 +5,9 @@
  */
 package model;
 
+import controller.Views;
+import com.fasterxml.jackson.annotation.JsonView;
+
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Basic;
@@ -48,15 +51,18 @@ import org.springframework.hateoas.ResourceSupport;
     @NamedQuery(name = "Breweries.findByAddUser", query = "SELECT b FROM Breweries b WHERE b.addUser = :addUser"),
     @NamedQuery(name = "Breweries.findByLastMod", query = "SELECT b FROM Breweries b WHERE b.lastMod = :lastMod"),
     @NamedQuery(name = "Breweries.findByCreditLimit", query = "SELECT b FROM Breweries b WHERE b.creditLimit = :creditLimit"),
+    @NamedQuery(name = "Breweries.findMaxId", query = "SELECT MAX(b.id) as maxid FROM Breweries b"),
     @NamedQuery(name = "Breweries.findByEmail", query = "SELECT b FROM Breweries b WHERE b.email = :email")})
 public class Breweries extends ResourceSupport implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    @JsonView(Views.BrewIDName.class)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
+    @JsonView(Views.BrewIDName.class)
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 255)

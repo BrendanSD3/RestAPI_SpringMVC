@@ -6,6 +6,7 @@
 package controller;
 
 import DAO.BeerService;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.google.zxing.WriterException;
 import java.io.IOException;
 import java.util.List;
@@ -22,13 +23,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import controller.TasteRestController;
+import javax.ws.rs.Path;
+import javax.ws.rs.QueryParam;
 import model.Categories;
 import model.Styles;
-/**
- *
- * @author brend
- */
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
 
 
 @RestController
@@ -37,9 +40,28 @@ public class BeerController {
     @Autowired
     BeerService service;
     
-       @GetMapping(value="/{page}/{size}",produces = MediaTypes.HAL_JSON_VALUE)
-      public Resources<Beers> getBeers(@PathVariable("page")int page,@PathVariable("size") int size) throws WriterException, IOException {
+       @JsonView(Views.Beeridnameabvprice.class)
+    @GetMapping("/id/name/abv/price")//Get all 
+     //see previous comment
+    public List<Beers> getallbeernameid() {
+        return service.getall();
+     }
+        @JsonView(Views.Beeridnameabvprice.class)
+    @GetMapping("/{id}/name/abv/price")//Get by ID
+     //see previous comment
+    public Beers getbeernamebyid(@PathVariable("id") int id) {
+        return service.getBeerByID(id);
+     }
+    
+    @Path("")
+       @GetMapping(produces = MediaTypes.HAL_JSON_VALUE)
+      public Resources<Beers> getBeers(@QueryParam("page")int page,@QueryParam("size") int size) throws WriterException, IOException {
             //System.out.println("HEERRREEE in get BEERS");
+          if(page<=0||size<=0)
+          {
+          page=1;
+          size=5;
+          }
           List<Beers> allBeers = service.getalllimit(page, size);
           
            
@@ -59,11 +81,11 @@ public class BeerController {
                    Link stylelink = linkTo(this.getClass())
                            .slash("styles")
                            .slash(styleid)
-                           .withRel("Style");
+                           .withRel("Style").withType("GET");
                    b.add(stylelink);
                 }
                 if(catid >=1){
-                Link catlink =linkTo(this.getClass()).slash("categories").slash(catid).withRel("Category");
+                Link catlink =linkTo(this.getClass()).slash("categories").slash(catid).withRel("Category").withType("GET");
                 b.add(catlink);
                 }
                 b.add(brewlink.slash(brewid).withRel("Breweries"));
@@ -77,7 +99,12 @@ public class BeerController {
     
       @GetMapping(value="/{id}",produces = MediaTypes.HAL_JSON_VALUE)
       public Resource getbeerbyid(@PathVariable("id") int id) throws WriterException, IOException {
-        Resource resource = new Resource<Beers>(service.getBeerByID(id));
+     
+      Beers b = service.getBeerByID(id);
+      
+       if(b!=null)
+       {
+          Resource resource = new Resource<Beers>(b);
         // resource.add(linkTo(methodOn(this.getClass()).getBreweries(1,10)).withRel("AllBReweries"));
          //resource.add(getqrcode(id));
         ControllerLinkBuilder linkTo= linkTo(ControllerLinkBuilder.methodOn(this.getClass()).getBeers(1,10));
@@ -86,7 +113,11 @@ public class BeerController {
       
           System.out.println("resource"+resource.toString());
         return resource;    
-                
+       }
+       else{
+           throw new NotFoundException("Not Found with id "+ id );
+       
+       }
       }
       @GetMapping(value="/categories/{catid}",produces = MediaTypes.HAL_JSON_VALUE)
       public Resource getcategorybyid(@PathVariable("catid") int catid) throws WriterException, IOException  {
@@ -115,7 +146,36 @@ public class BeerController {
         return resource;    
                 
       }
-      
+      @PatchMapping(value="{id}/sellprice")
+      @ResponseStatus(HttpStatus.OK)
+      public String updateSellprice(@RequestBody double sellPrice, @PathVariable("id") int id)
+      {
+          System.out.println("sellprice" + sellPrice + " Formatted"+ String.format("%.2f", sellPrice));
+          double fsellprice=Double.parseDouble(String.format("%.2f", sellPrice));
+          
+          System.out.println("sellPrice"+ fsellprice);
+          boolean success=false;
+          
+          Beers b = service.getBeerByID(id);
+          if(b==null)
+          {
+              return "Error occured";
+          }
+          
+          double oldprice=b.getSellPrice();
+          
+          success=service.updateBeerSellPrice(fsellprice, id);
+                    
+          if(success==true)
+          {
+          return "Updated the sell price from: " + oldprice + " to:  "+ fsellprice;
+          }
+          else{
+             return "Some Error occured";
+          }
+          
+          
+      }
       
 //     Categories cat= service.getCategoryByID(catid);
     

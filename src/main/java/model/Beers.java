@@ -5,6 +5,8 @@
  */
 package model;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import controller.Views;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Basic;
@@ -48,6 +50,7 @@ import org.springframework.hateoas.ResourceSupport;
 public class Beers extends ResourceSupport implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    @JsonView(Views.Beeridnameabvprice.class)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
@@ -57,6 +60,7 @@ public class Beers extends ResourceSupport implements Serializable {
     @NotNull
     @Column(name = "brewery_id")
     private int breweryId;
+    @JsonView(Views.Beeridnameabvprice.class)
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 255)
@@ -70,6 +74,7 @@ public class Beers extends ResourceSupport implements Serializable {
     @NotNull
     @Column(name = "style_id")
     private int styleId;
+    @JsonView(Views.Beeridnameabvprice.class)
     @Basic(optional = false)
     @NotNull
     @Column(name = "abv")
@@ -107,6 +112,7 @@ public class Beers extends ResourceSupport implements Serializable {
     @NotNull
     @Column(name = "buy_price")
     private double buyPrice;
+    @JsonView(Views.Beeridnameabvprice.class)
     @Basic(optional = false)
     @NotNull
     @Column(name = "sell_price")

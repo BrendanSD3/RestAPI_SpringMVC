@@ -5,8 +5,10 @@
  */
 package DAO;
 
+import java.awt.print.Pageable;
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import javax.persistence.TypedQuery;
 import model.Beers;
 import model.Categories;
@@ -49,6 +51,34 @@ public class BeerService {
     
     
     }
+     public boolean updateBeerSellPrice(double sellPrice, int id)
+     {
+     EntityManager em = DBUtil.getEMF().createEntityManager();
+     boolean updated=false;
+        String query="update Beers set sellPrice = :sellPrice where id = :id ";
+        TypedQuery<Beers> tq = em.createQuery(query, Beers.class);
+        tq.setParameter("sellPrice" , sellPrice);
+        tq.setParameter("id", id);
+       
+        EntityTransaction trans=em.getTransaction();
+          try{
+              trans.begin();
+              tq.executeUpdate();
+              trans.commit();
+              //System.out.println("Updating");
+              updated=true;
+          }
+      catch(Exception ex){
+          System.out.println("ex"+ ex);
+          updated=false;
+      }
+          finally{
+              em.close();
+          }
+     return updated;
+     }
+     
+     
     public List<Beers> getall( )
     {
         //System.out.println("Here");

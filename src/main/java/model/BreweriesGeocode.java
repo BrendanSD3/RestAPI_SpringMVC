@@ -30,6 +30,7 @@ import org.springframework.hateoas.ResourceSupport;
     @NamedQuery(name = "BreweriesGeocode.findAll", query = "SELECT b FROM BreweriesGeocode b"),
     @NamedQuery(name = "BreweriesGeocode.findById", query = "SELECT b FROM BreweriesGeocode b WHERE b.id = :id"),
     @NamedQuery(name = "BreweriesGeocode.findByBreweryId", query = "SELECT b FROM BreweriesGeocode b WHERE b.breweryId = :breweryId"),
+    @NamedQuery(name = "BreweriesGeocode.findMaxId", query = "SELECT MAX(b.id) as maxid FROM BreweriesGeocode b"),
     @NamedQuery(name = "BreweriesGeocode.findByLatitude", query = "SELECT b FROM BreweriesGeocode b WHERE b.latitude = :latitude"),
     @NamedQuery(name = "BreweriesGeocode.findByLongitude", query = "SELECT b FROM BreweriesGeocode b WHERE b.longitude = :longitude")})
 public class BreweriesGeocode extends ResourceSupport implements Serializable {
