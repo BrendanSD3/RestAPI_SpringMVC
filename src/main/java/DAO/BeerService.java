@@ -5,7 +5,6 @@
  */
 package DAO;
 
-import java.awt.print.Pageable;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -158,4 +157,78 @@ public class BeerService {
 
         return style;
     }
+     
+     
+     
+     
+     
+     
+     public void addBeer(Beers b)
+      {
+         
+          EntityManager em =DBUtil.getEMF().createEntityManager();
+          EntityTransaction trans=em.getTransaction();
+          try{
+              trans.begin();
+              em.persist(b);
+              trans.commit();
+              
+            
+          }
+      catch(Exception ex){
+          
+          System.out.println("ex"+ ex);
+          
+      }
+          finally{
+              em.close();
+          }
+                 
+         
+      }
+     public void updateBeer(Beers b)//update multiple fields
+      {
+          EntityManager em = DBUtil.getEMF().createEntityManager();
+           EntityTransaction trans=em.getTransaction();
+          try{
+              trans.begin();
+              em.merge(b);
+              trans.commit();
+              //System.out.println("Updating");
+          }
+      catch(Exception ex){
+          System.out.println("ex"+ ex);
+          
+      }
+          finally{
+              em.close();
+          }
+      }
+           public boolean deleteBeer(int id)
+      {
+          boolean isdeleted = false;
+          Beers b = getBeerByID(id);
+          if(b==null)
+          {
+              return isdeleted;
+          }
+          else{
+          EntityManager em = DBUtil.getEMF().createEntityManager();
+          EntityTransaction trans= em.getTransaction();
+          try{
+              trans.begin();
+              em.remove(em.merge(b));
+              trans.commit();
+              isdeleted=true;
+          }
+          catch(Exception e){
+              isdeleted=false;
+              System.out.println("ex"+ e);
+          }
+          finally {
+              em.close();
+          }
+          return isdeleted;
+      }
+      }
 }

@@ -28,9 +28,13 @@ import javax.ws.rs.QueryParam;
 import model.Categories;
 import model.Styles;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 
 
@@ -187,6 +191,64 @@ public class BeerController {
           
       }
       
-//     Categories cat= service.getCategoryByID(catid);
+      
+      
+      
+      @DeleteMapping(value="/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public String delete(@PathVariable("id") int id){
+      boolean deleted = false;  
+      deleted = service.deleteBeer(id);
+     if(deleted == false)
+     {
+          throw new NotFoundException("could not delete Beer with id "+ id );
+     }
+     else{
+       return "Deleted Beer with id: "+id;
+     }
+    }
+    
+    
+    @PutMapping(value="/{id}")
+    //@Produces(MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    public String update(@PathVariable("id") int id, @RequestBody Beers b){
+        
+       if(b.getBeersId()!=null)
+       {
+           service.updateBeer(b);
+           return "Succesfully updated "+ b.getName();
+       }
+       else{
+           throw new NotFoundException("could not Update Beer with id "+ id );
+       } 
+        
+        
+        
+    }
+      
+    //Adds new Brewery
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public String create(@RequestBody Beers b){
+      
+    try{ 
+       if(b == null)
+       {
+       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Something Wrong with the request");
+       
+       }
+       else{
+        service.addBeer(b);
+        return "Created new Beer with name: " + b.getName();
+    }
+    }
+      catch(Exception e)
+        {
+              throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Something Wrong with the request", e);
+        
+        }
+    
+    }
     
 }
