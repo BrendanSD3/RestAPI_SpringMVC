@@ -90,10 +90,14 @@ public class TasteRestController {
        if(b!=null)
        {
        
-          Resource resource = new Resource<Breweries>(b);
-          ControllerLinkBuilder linkTo= linkTo(ControllerLinkBuilder.methodOn(this.getClass()).getBreweries(1,10));
-          resource.add(linkTo.withRel("all-Breweries"));
-         
+          
+          int page=1;
+          int size=10;
+           Link allbrews = linkTo(this.getClass()).slash("?page="+page+"&size="+size).withRel("allBreweries").withType("GET");
+          //resource.add(linkTo.withRel("all-Breweries"));
+          Resource resource = new Resource<Breweries>(b,allbrews); 
+          System.out.println("resource"+ resource.toString());
+           
           return resource;
        }
        else{
@@ -116,7 +120,7 @@ public class TasteRestController {
       }
   
      
-        @GetMapping(produces = MediaTypes.HAL_JSON_VALUE)
+        @GetMapping(value="",produces = MediaTypes.HAL_JSON_VALUE)
         @ResponseStatus(HttpStatus.OK)
         
       public Resources<Breweries> getBreweries(@QueryParam("page")int page,@QueryParam("size") int size)  throws WriterException, IOException {

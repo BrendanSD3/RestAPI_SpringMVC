@@ -57,7 +57,7 @@ public class RestResponseEntityExceptionHandler  extends ResponseEntityException
          {
              
         } else {
-             error="Content length is 0, a Post Method requires a body ";
+             error="Content length is 0 ";
            }
          final ApiError apiError = new ApiError(status, ex.getLocalizedMessage(),error);
          

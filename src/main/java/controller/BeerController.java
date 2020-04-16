@@ -91,7 +91,8 @@ public class BeerController {
                 b.add(brewlink.slash(brewid).withRel("Breweries"));
                 linkTo(methodOn(this.getClass()).getbeerbyid(id));
             }
-        Link link =linkTo(this.getClass()).withSelfRel();
+       
+        Link link =linkTo(this.getClass()).slash("?page="+page+"&size="+size).withSelfRel();
         Resources<Beers> result=new Resources<Beers>(allBeers,link);
         return result;
                           
@@ -104,11 +105,15 @@ public class BeerController {
       
        if(b!=null)
        {
-          Resource resource = new Resource<Beers>(b);
+          
         // resource.add(linkTo(methodOn(this.getClass()).getBreweries(1,10)).withRel("AllBReweries"));
          //resource.add(getqrcode(id));
-        ControllerLinkBuilder linkTo= linkTo(ControllerLinkBuilder.methodOn(this.getClass()).getBeers(1,10));
-        resource.add(linkTo.withRel("all-Beers"));
+         int page=1;
+          int size=10;
+           Link allbeers = linkTo(this.getClass()).slash("?page="+page+"&size="+size).withRel("allBeers").withType("GET");
+        //resource.add(linkTo.withRel("all-Beers"));
+        
+        Resource resource = new Resource<Beers>(b,allbeers);
         //resource.add(getqrcode(id).withRel("QRcode"));
       
           System.out.println("resource"+resource.toString());
@@ -121,13 +126,15 @@ public class BeerController {
       }
       @GetMapping(value="/categories/{catid}",produces = MediaTypes.HAL_JSON_VALUE)
       public Resource getcategorybyid(@PathVariable("catid") int catid) throws WriterException, IOException  {
-        Resource resource = new Resource<Categories>(service.getCategoryByID(catid));
+        
        //Categories cat= service.getCategoryByID(catid);
-        ControllerLinkBuilder linkTo= linkTo(ControllerLinkBuilder.methodOn(this.getClass()).getBeers(1,10));
-        
-        resource.add(linkTo.withRel("all-Beers"));
-        
-      
+//        ControllerLinkBuilder linkTo= linkTo(ControllerLinkBuilder.methodOn(this.getClass()).getBeers(1,10));
+//        
+//        resource.add(linkTo.withRel("all-Beers"));
+         int page=1;
+          int size=10;
+           Link allbeers = linkTo(this.getClass()).slash("?page="+page+"&size="+size).withRel("allBeers").withType("GET");
+      Resource resource = new Resource<Categories>(service.getCategoryByID(catid),allbeers);
           System.out.println("resource"+resource.toString());
         return resource;    
                 
@@ -135,12 +142,15 @@ public class BeerController {
       
             @GetMapping(value="/styles/{styleid}",produces = MediaTypes.HAL_JSON_VALUE)
       public Resource getstylebyid(@PathVariable("styleid") int styleid) throws WriterException, IOException  {
-        Resource resource = new Resource<Styles>(service.getStylesByID(styleid));
+        
        //Categories cat= service.getCategoryByID(catid);
-        ControllerLinkBuilder linkTo= linkTo(ControllerLinkBuilder.methodOn(this.getClass()).getBeers(1,10));
+        //ControllerLinkBuilder linkTo= linkTo(ControllerLinkBuilder.methodOn(this.getClass()).getBeers(1,10));
         
-        resource.add(linkTo.withRel("all-Beers"));
-        
+        //resource.add(linkTo.withRel("all-Beers"));
+        int page=1;
+          int size=10;
+           Link allbeers = linkTo(this.getClass()).slash("?page="+page+"&size="+size).withRel("allBeers").withType("GET");
+        Resource resource = new Resource<Styles>(service.getStylesByID(styleid),allbeers);
       
           System.out.println("resource"+resource.toString());
         return resource;    
