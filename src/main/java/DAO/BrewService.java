@@ -77,11 +77,13 @@ public class BrewService {
     
     
     }
-    public void addGeoBrew()
+    public void addGeoBrew(float lat, float lon)
       {
+         
+          System.out.println("lat"+lat + "lon"+lon);
           int brew_id=getmaxBreweryID();
           int geoID=getmaxBreweryGeoID();
-          BreweriesGeocode b= new BreweriesGeocode(geoID,brew_id,0,0);
+          BreweriesGeocode b= new BreweriesGeocode(geoID,brew_id,lat,lon);
           
           EntityManager em =DBUtil.getEMF().createEntityManager();
           EntityTransaction trans=em.getTransaction();
@@ -123,6 +125,11 @@ public class BrewService {
        }
       public void addBreweries(Breweries b)
       {
+          
+//          System.out.println("Lat"+ b.getLatitude());
+          float lat=b.getLatitude();
+          float lon= b.getLongitude();
+          System.out.println("Adding new geo brew aswell with lat and lon = "+ lat + lon);
          
           EntityManager em =DBUtil.getEMF().createEntityManager();
           EntityTransaction trans=em.getTransaction();
@@ -141,8 +148,8 @@ public class BrewService {
           finally{
               em.close();
           }
-                 
-          addGeoBrew();
+          
+          //addGeoBrew(lat,lon);
       }
       public void updateBreweries(Breweries b)//update multiple fields
       {
