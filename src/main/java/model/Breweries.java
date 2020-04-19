@@ -19,9 +19,13 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.SecondaryTable;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -34,6 +38,7 @@ import org.springframework.hateoas.ResourceSupport;
  */
 @Entity
 @Table(name = "breweries")
+@SecondaryTable(name = "breweries_geocode",pkJoinColumns=@PrimaryKeyJoinColumn(name="brewery_id", referencedColumnName = "id"))
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Breweries.findAll", query = "SELECT b FROM Breweries b"),
@@ -140,11 +145,52 @@ public class Breweries extends ResourceSupport implements Serializable {
     @Column(name = "email")
     private String email;
 
+    @Column(table="breweries_geocode")
+    @NotNull(message="enter number between -90 and 90")
+    
+    @Max(90)
+    @Min(-90)
+    private float latitude;
+    
+    @Column(table="breweries_geocode")
+    @NotNull //(message="enter number between -180 and 180")
+    @Max(180) 
+    @Min(-180)
+    private float longitude;
+
+ 
+
+    
+    
+    
+    
+    
     public Breweries() {
     }
 
     public Breweries(Integer id) {
         this.id = id;
+    }
+
+    public Breweries(Integer id, String name, String address1, String address2, String city, String state, String code, String country, String phone, String website, String image, String description, int addUser, Date lastMod, double creditLimit, String email, float latitude, float longitude) {
+        this.id = id;
+        this.name = name;
+        this.address1 = address1;
+        this.address2 = address2;
+        this.city = city;
+        this.state = state;
+        this.code = code;
+        this.country = country;
+        this.phone = phone;
+        this.website = website;
+        this.image = image;
+        this.description = description;
+        this.addUser = addUser;
+        this.lastMod = lastMod;
+        this.creditLimit = creditLimit;
+        this.email = email;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
     public Breweries(Integer id, String name, String address1, String address2, String city, String state, String code, String country, String phone, String website, String image, String description, int addUser, Date lastMod, double creditLimit, String email) {
@@ -165,7 +211,21 @@ public class Breweries extends ResourceSupport implements Serializable {
         this.creditLimit = creditLimit;
         this.email = email;
     }
+   public float getLatitude() {
+        return latitude;
+    }
 
+    public float getLongitude() {
+        return longitude;
+    }
+
+    public void setLatitude(float latitude) {
+        this.latitude = latitude;
+    }
+
+    public void setLongitude(float longitude) {
+        this.longitude = longitude;
+    }
     public Integer getBreweryId() {
         return id;
     }
